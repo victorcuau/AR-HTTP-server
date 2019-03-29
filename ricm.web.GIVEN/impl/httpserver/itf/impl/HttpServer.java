@@ -76,7 +76,9 @@ public class HttpServer {
 		String method = parse.nextToken().toUpperCase(); 
 		String ressname = parse.nextToken();
 		if (method.equals("GET")) {
+			
 			request = new HttpStaticRequest(this, method, ressname);
+			
 		} else 
 			request = new UnknownRequest(this, method, ressname);
 		return request;

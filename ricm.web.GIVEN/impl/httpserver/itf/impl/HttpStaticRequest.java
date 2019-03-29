@@ -68,7 +68,8 @@ public class HttpStaticRequest extends HttpRequest {
 					*/
 
 					default:
-						resp.setReplyError(404, "File type is not supported");
+						new UnknownRequest(m_hs, m_method, m_ressname).process(resp);;
+						//resp.setReplyError(404, "File type is not supported");
 						break;
 				}
 				
