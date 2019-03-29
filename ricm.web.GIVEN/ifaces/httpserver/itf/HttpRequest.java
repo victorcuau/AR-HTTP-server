@@ -39,6 +39,7 @@ public abstract class HttpRequest {
 		else if (name.endsWith(".gif") ) return "image/gif";
 		else if (name.endsWith(".class") ) return "application/octet-stream";
 		else if (name.endsWith(".jpg") || name.endsWith(".jpeg")) return "image/jpeg";
+		else if (name.endsWith(".pdf")) return "application/pdf";
 		else return "text/plain";
 	}
 	
