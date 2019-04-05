@@ -15,6 +15,7 @@ import httpserver.itf.HttpSession;
 public class HttpRicmletRequestImpl extends HttpRicmletRequest {
 
 	Hashtable<String, String> arguments = new Hashtable<String, String>();
+	Hashtable<String, String> cookies = new Hashtable<String, String>();
 
 	public HttpRicmletRequestImpl(HttpServer hs, String method, String ressname) throws IOException {
 		super(hs, method, ressname);
@@ -41,8 +42,7 @@ public class HttpRicmletRequestImpl extends HttpRicmletRequest {
 	}
 
 	public String getCookie(String name) {
-		// TODO Auto-generated method stub
-		return null;
+		return cookies.get(name);
 	}
 
 	public void process(HttpResponse resp) throws Exception {
