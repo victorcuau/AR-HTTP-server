@@ -6,6 +6,7 @@ import java.io.PrintStream;
 import java.net.MalformedURLException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.Hashtable;
 import java.util.StringTokenizer;
 
 import httpserver.itf.HttpRequest;
@@ -29,6 +30,8 @@ public class HttpServer {
 	private int m_port;
 	private File m_folder; 
 	private ServerSocket m_ssoc;
+	
+	Hashtable<String, HttpRicmlet> instances = new Hashtable<String, HttpRicmlet>();
 
 	protected HttpServer(int port, String folderName) {
 		m_port = port;
@@ -50,7 +53,12 @@ public class HttpServer {
 	
 	public HttpRicmlet getInstance(String clsname)
 			throws InstantiationException, IllegalAccessException, ClassNotFoundException, MalformedURLException {
-		throw new Error("No Support for Ricmlets");
+		
+		if (instances.isEmpty() || !instances.containsKey(clsname)) {
+			HttpRicmlet instance = (HttpRicmlet)(Class.forName(clsname).newInstance());
+			instances.put(clsname, instance);
+		}
+		return instances.get(clsname);
 	}
 
 	protected void loop() {
@@ -76,8 +84,12 @@ public class HttpServer {
 		String method = parse.nextToken().toUpperCase(); 
 		String ressname = parse.nextToken();
 		if (method.equals("GET")) {
-			
-			request = new HttpStaticRequest(this, method, ressname);
+			if (ressname.contains("/ricmlets/")) {
+				request = new HttpRicmletRequestImpl(this,method,ressname);
+			}
+			else {
+				request = new HttpStaticRequest(this, method, ressname);
+			}
 			
 		} else 
 			request = new UnknownRequest(this, method, ressname);
@@ -89,6 +101,9 @@ public class HttpServer {
 	 * Returns an HttpResponse object corresponding the the given HttpRequest object
 	 */
 	public HttpResponse getResponse(HttpRequest req, PrintStream ps) {
+		if (req instanceof HttpRicmletRequestImpl) {
+			return new HttpRicmletResponseImpl(this, req, ps);
+		}
 		return new HttpResponseImpl(this, req, ps);
 	}
 
