@@ -9,21 +9,14 @@ public class HttpRicmletResponseImpl extends HttpResponseImpl implements HttpRic
 	
 	protected HttpRicmletResponseImpl(HttpServer hs, HttpRequest req, PrintStream ps) {
 		super(hs, req, ps);
-		// TODO Auto-generated constructor stub
 	}
 
-	@Override
 	public void setCookie(String name, String value) {
 		m_ps.println("Set-Cookie: " + name + "=" + value);
 	}
 
-	@Override
 	public void setSession(String id) {
-		// TODO Auto-generated method stub
-		
+		setCookie("ID",id);
 	}
-
-
-	
 	
 }

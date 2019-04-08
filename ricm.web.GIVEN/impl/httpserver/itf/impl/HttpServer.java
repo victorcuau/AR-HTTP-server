@@ -31,9 +31,13 @@ public class HttpServer {
 	private File m_folder; 
 	private ServerSocket m_ssoc;
 	
-	Hashtable<String, HttpRicmlet> instances = new Hashtable<String, HttpRicmlet>();
+	// Stockage des instances de classes HttpRicmlet
+	Hashtable<String, HttpRicmlet> instances;
+	public Hashtable<String,Session> sessions;
 
 	protected HttpServer(int port, String folderName) {
+		instances = new Hashtable<String, HttpRicmlet>();
+		sessions = new Hashtable<String, Session>();
 		m_port = port;
 		if (!folderName.endsWith(File.separator)) 
 			folderName = folderName + File.separator;

@@ -28,17 +28,6 @@ public class HttpRicmletRequestImpl extends HttpRicmletRequest {
 
 	public String getArg(String name) {
 		return arguments.get(name);
-		/*
-		 * if (m_ressname.contains("?" + name + "=")){ return
-		 * m_ressname.substring(m_ressname.indexOf("?" + name + "=") + name.length() +
-		 * 2, m_ressname.indexOf("&")); } else if ( m_ressname.contains("&" + name +
-		 * "=") ) { System.out.println(m_ressname.substring(m_ressname.indexOf("&" +
-		 * name + "=") + name.length() + 2)); int test = m_ressname.indexOf("&" + name +
-		 * "=") + name.length() + 2; return m_ressname.substring(m_ressname.indexOf("&"
-		 * + name + "=") + name.length() + 2,
-		 * m_ressname.substring(m_ressname.indexOf("&" + name + "=") + name.length() +
-		 * 2).indexOf("&") + test + 2); } return null;
-		 */
 	}
 
 	public String getCookie(String name) {
