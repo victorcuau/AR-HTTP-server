@@ -1,5 +1,6 @@
 package httpserver.itf.impl;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -16,14 +17,31 @@ public class HttpRicmletRequestImpl extends HttpRicmletRequest {
 
 	Hashtable<String, String> arguments = new Hashtable<String, String>();
 	Hashtable<String, String> cookies = new Hashtable<String, String>();
+	public BufferedReader reader;
 
 	public HttpRicmletRequestImpl(HttpServer hs, String method, String ressname) throws IOException {
 		super(hs, method, ressname);
 	}
 
 	public HttpSession getSession() {
-		// TODO Auto-generated method stub
-		return null;
+		Session session;
+		String sessionID = cookies.get("ID");
+		if (sessionID == null) {
+			int cpt = 1;
+			while(this.m_hs.sessions.containsKey(new Integer(cpt).toString())) {
+				cpt++;
+			}
+			session = new Session(new Integer(cpt).toString());
+			this.m_hs.sessions.put(session.getId(), session);
+		}
+		else {
+			session = this.m_hs.sessions.get(sessionID);
+			if (session == null) {
+				session = new Session(getCookie("ID"));
+				this.m_hs.sessions.put(session.getId(), session);
+			}
+		}
+		return session;
 	}
 
 	public String getArg(String name) {
@@ -47,6 +65,16 @@ public class HttpRicmletRequestImpl extends HttpRicmletRequest {
 					arguments.put(arg[0], arg[1]);
 				}
 			}
+			
+			// Récupération des cookies
+			String currentLine;
+	    while(!(currentLine = reader.readLine()).isEmpty()) {
+	      if(currentLine.startsWith("Cookie: ")) {
+	        String cookieLine = currentLine.substring(8);
+	        String cookie[] = cookieLine.split("=");
+	        cookies.put(cookie[0], cookie[1]);
+	      }
+	    }
 
 			try {
 				HttpRicmlet instance = m_hs.getInstance(className);
