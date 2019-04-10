@@ -13,10 +13,11 @@ public class HttpRicmletResponseImpl extends HttpResponseImpl implements HttpRic
 
 	public void setCookie(String name, String value) {
 		m_ps.println("Set-Cookie: " + name + "=" + value);
+		System.out.println("Set-Cookie: " + name + "=" + value);
 	}
 
 	public void setSession(String id) {
-		setCookie("ID",id);
+		setCookie("sessionid",id);
 	}
 	
 }

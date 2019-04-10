@@ -32,7 +32,9 @@ public class HttpServer {
 	private ServerSocket m_ssoc;
 	
 	// Stockage des instances de classes HttpRicmlet
-	Hashtable<String, HttpRicmlet> instances;
+	public Hashtable<String, HttpRicmlet> instances;
+	
+  //Stockage des sessions de chaque utilisateur
 	public Hashtable<String,Session> sessions;
 
 	protected HttpServer(int port, String folderName) {
@@ -69,7 +71,7 @@ public class HttpServer {
 		try {
 			while (true) {
 				Socket soc = m_ssoc.accept();
-				(new HttpWorker(this, soc)).start();
+				(new HttpWorker(this, soc)).start(); // 1 worker par connexion
 			}
 		} catch (IOException e) {
 			System.out.println("HttpServer Exception, skipping request");
@@ -89,7 +91,7 @@ public class HttpServer {
 		String ressname = parse.nextToken();
 		if (method.equals("GET")) {
 			if (ressname.contains("/ricmlets/")) {
-				request = new HttpRicmletRequestImpl(this,method,ressname);
+				request = new HttpRicmletRequestImpl(this,method,ressname,br);
 			}
 			else {
 				request = new HttpStaticRequest(this, method, ressname);

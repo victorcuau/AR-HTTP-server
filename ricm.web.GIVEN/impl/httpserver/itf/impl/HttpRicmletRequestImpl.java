@@ -18,27 +18,38 @@ public class HttpRicmletRequestImpl extends HttpRicmletRequest {
 	Hashtable<String, String> arguments = new Hashtable<String, String>();
 	Hashtable<String, String> cookies = new Hashtable<String, String>();
 	public BufferedReader reader;
+	int cptSession = 1; // Compte le nb de sessions pour les numéroter
 
-	public HttpRicmletRequestImpl(HttpServer hs, String method, String ressname) throws IOException {
+	public HttpRicmletRequestImpl(HttpServer hs, String method, String ressname, BufferedReader reader)
+			throws IOException {
 		super(hs, method, ressname);
+
+		// Récupération des cookies de la requête
+		String currentLine;
+		while (!(currentLine = reader.readLine()).isEmpty()) {
+			if (currentLine.startsWith("Cookie: ")) {
+				String cookieLine = currentLine.substring(8);
+				String cookie[] = cookieLine.split("=");
+				cookies.put(cookie[0], cookie[1]);
+				System.out.println("Cookie: " + cookie[0] + " = " + cookie[1]);
+			}
+		}
+		
 	}
 
 	public HttpSession getSession() {
 		Session session;
-		String sessionID = cookies.get("ID");
+		String sessionID = cookies.get("sessionid");
 		if (sessionID == null) {
-			int cpt = 1;
-			while(this.m_hs.sessions.containsKey(new Integer(cpt).toString())) {
-				cpt++;
-			}
-			session = new Session(new Integer(cpt).toString());
+			session = new Session(new Integer(cptSession++).toString());
 			this.m_hs.sessions.put(session.getId(), session);
 		}
 		else {
 			session = this.m_hs.sessions.get(sessionID);
 			if (session == null) {
-				session = new Session(getCookie("ID"));
+				session = new Session(getCookie("sessionid"));
 				this.m_hs.sessions.put(session.getId(), session);
+				System.out.println("Session: " + session.getId());
 			}
 		}
 		return session;
@@ -65,16 +76,6 @@ public class HttpRicmletRequestImpl extends HttpRicmletRequest {
 					arguments.put(arg[0], arg[1]);
 				}
 			}
-			
-			// Récupération des cookies
-			String currentLine;
-	    while(!(currentLine = reader.readLine()).isEmpty()) {
-	      if(currentLine.startsWith("Cookie: ")) {
-	        String cookieLine = currentLine.substring(8);
-	        String cookie[] = cookieLine.split("=");
-	        cookies.put(cookie[0], cookie[1]);
-	      }
-	    }
 
 			try {
 				HttpRicmlet instance = m_hs.getInstance(className);
